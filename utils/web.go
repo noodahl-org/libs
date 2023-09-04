@@ -1,0 +1,24 @@
+package utils
+
+import (
+	"io"
+	"net/http"
+	"net/url"
+)
+
+func ReadHTTPResponse(resp *http.Response) (string, error) {
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	return string(body), nil
+}
+
+func Domain(path string) string {
+	u, err := url.Parse(path)
+	if err != nil {
+		return ""
+	}
+	return u.Host
+}

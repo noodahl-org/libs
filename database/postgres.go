@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -14,6 +15,11 @@ import (
 
 type PgErrorNotFound error
 type PgErrorConflict error
+
+type PostgresDB struct {
+	ctx    context.Context
+	client *gorm.DB
+}
 
 func (d PostgresDB) MigrateDomainModels(models ...*interface{}) error {
 	for _, model := range models {
@@ -83,5 +89,10 @@ func (d PostgresDB) FetchSource(q *models.Source) error {
 }
 func (d PostgresDB) DeleteSource(q *models.Source) error {
 	result := d.client.WithContext(d.ctx).Where("id = ?", q.StorageBase.ID).Delete(&models.Source{})
+	return result.Error
+}
+
+func (d PostgresDB) CreateWebAPIRequestStats(i *models.APIRequestStats) error {
+	result := d.client.Clauses(clause.OnConflict{DoNothing: true}).Create(i)
 	return result.Error
 }

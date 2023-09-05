@@ -87,6 +87,13 @@ func (d PostgresDB) FetchSource(q *models.Source) error {
 	result := d.client.First(q, q)
 	return result.Error
 }
+
+func (d PostgresDB) FetchArticles(q *models.Article) ([]models.Article, error) {
+	out := []models.Article{}
+	result := d.client.Find(&out, q)
+	return out, result.Error
+}
+
 func (d PostgresDB) DeleteSource(q *models.Source) error {
 	result := d.client.WithContext(d.ctx).Where("id = ?", q.StorageBase.ID).Delete(&models.Source{})
 	return result.Error

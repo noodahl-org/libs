@@ -90,7 +90,7 @@ func (d PostgresDB) FetchSource(q *models.Source) error {
 
 func (d PostgresDB) FetchArticles(q *models.Article) ([]models.Article, error) {
 	out := []models.Article{}
-	result := d.client.Find(&out, q)
+	result := d.client.Order("posted DESC").Find(&out, q)
 	return out, result.Error
 }
 

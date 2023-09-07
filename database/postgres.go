@@ -44,14 +44,9 @@ func NewPostgresDB(conf *config.Conf) (Database, error) {
 
 }
 
-func (d PostgresDB) CreateArticles(articles ...models.Article) error {
-	for _, article := range articles {
-		_, err := d.CreateArticle(&article)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
+func (d PostgresDB) CreateArticles(articles []models.Article)(int64, error) {
+	result :=d.client.Clauses(clause.OnConflict{DoNothing: true}).Create(articles)
+	return result.RowsAffected, result.Error
 }
 
 func (d PostgresDB) CreateArticle(i *models.Article) (int64, error) {

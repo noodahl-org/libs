@@ -3,6 +3,7 @@ package config
 import "gopkg.in/yaml.v2"
 
 type Conf struct {
+	APIURL     string `yaml:"api_url"`
 	DBHost     string `yaml:"db_host"`
 	DBPort     int    `yaml:"db_port"`
 	DBName     string `yaml:"db_name"`

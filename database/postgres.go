@@ -83,6 +83,11 @@ func (d PostgresDB) FetchSource(q *models.Source) error {
 	return result.Error
 }
 
+func (d PostgresDB) FetchArticle(q *models.Article) error {
+	result := d.client.First(q, q)
+	return result.Error
+}
+
 func (d PostgresDB) FetchArticlesSummary(q *models.Article) ([]models.Article, error) {
 	out := []models.Article{}
 	result := d.client.Omit("raw, content").Order("published DESC").Find(&out, q)

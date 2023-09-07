@@ -13,5 +13,6 @@ type Database interface {
 	CreateArticles(i []models.Article) (int64, error)
 	FetchArticles(q *models.Article) ([]models.Article, error)
 	FetchArticlesSummary(q *models.Article) ([]models.Article, error)
+	FetchArticlesSummaryLimit(a *models.Article, limit int) ([]models.Article, error)
 	CreateWebAPIRequestStats(i *models.APIRequestStats) error
 }

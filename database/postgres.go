@@ -44,8 +44,8 @@ func NewPostgresDB(conf *config.Conf) (Database, error) {
 
 }
 
-func (d PostgresDB) CreateArticles(articles []models.Article)(int64, error) {
-	result :=d.client.Clauses(clause.OnConflict{DoNothing: true}).Create(articles)
+func (d PostgresDB) CreateArticles(articles []models.Article) (int64, error) {
+	result := d.client.Clauses(clause.OnConflict{DoNothing: true}).Create(articles)
 	return result.RowsAffected, result.Error
 }
 
@@ -86,6 +86,12 @@ func (d PostgresDB) FetchSource(q *models.Source) error {
 func (d PostgresDB) FetchArticlesSummary(q *models.Article) ([]models.Article, error) {
 	out := []models.Article{}
 	result := d.client.Omit("raw, content").Order("published DESC").Find(&out, q)
+	return out, result.Error
+}
+
+func (d PostgresDB) FetchArticlesSummaryLimit(q *models.Article, limit int) ([]models.Article, error) {
+	out := []models.Article{}
+	result := d.client.Omit("raw, content").Limit(limit).Find(&out, q)
 	return out, result.Error
 }
 

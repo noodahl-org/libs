@@ -96,7 +96,7 @@ func (d PostgresDB) FetchArticlesSummary(q *models.Article) ([]models.Article, e
 
 func (d PostgresDB) FetchArticlesSummaryLimit(q *models.Article, limit int) ([]models.Article, error) {
 	out := []models.Article{}
-	result := d.client.Omit("raw, content").Order("published DESC").Limit(limit).Find(&out, q)
+	result := d.client.Omit("raw").Order("published DESC").Limit(limit).Find(&out, q)
 	return out, result.Error
 }
 

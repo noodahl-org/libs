@@ -6,13 +6,13 @@ import (
 	"net/url"
 )
 
-func ReadHTTPResponse(resp *http.Response) (string, error) {
+func ReadHTTPResponse(resp *http.Response) ([]byte, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", err
+		return []byte{}, err
 	}
 	defer resp.Body.Close()
-	return string(body), nil
+	return body, nil
 }
 
 func Domain(path string) string {

@@ -6,7 +6,7 @@ import (
 
 type FeedSources struct {
 	Endpoints []string
-	Tags      []string
+	Tags      string
 }
 
 type DomainAggregation struct {

@@ -13,7 +13,7 @@ import (
 
 type Feed interface {
 	FetchURL(ctx context.Context, c chan []models.Article, url string, sourceID uuid.UUID)
-	FetchFeedList(ctx context.Context, feedSources []models.FeedSources)
+	FetchFeedList(ctx context.Context, feedSources []string)
 }
 
 type RSSClient struct {
@@ -30,27 +30,23 @@ func NewRSSClient(conf *config.Conf, db database.Database) Feed {
 	}
 }
 
-func (r RSSClient) FetchFeedList(ctx context.Context, feedSources []models.FeedSources) {
-	var ch chan []models.Article
-	var totalEPs int
+func (r RSSClient) FetchFeedList(ctx context.Context, feedSources []string) {
+	ch := make(chan []models.Article, len(feedSources))
 	defer close(ch)
 
-	for _, fs := range feedSources {
-		for _, endpoint := range fs.Endpoints {
-			totalEPs += len(fs.Endpoints)
-			source := &models.Source{
-				URL:  endpoint,
-				Tags: fs.Tags,
-			}
-			err := r.db.GetOrCreateSource(source)
-			if err != nil {
-				log.Panic(err)
-			}
-			go r.FetchURL(ctx, ch, endpoint, source.StorageBase.ID)
+	for _, url := range feedSources {
+		source := &models.Source{
+			URL: url,
 		}
+		err := r.db.GetOrCreateSource(source)
+		if err != nil {
+			log.Panic(err)
+		}
+		go r.FetchURL(ctx, ch, url, source.StorageBase.ID)
+
 	}
 
-	for i := 0; i < totalEPs; i++ {
+	for i := 0; i < len(feedSources); i++ {
 		feed := <-ch
 		if len(feed) > 0 {
 			num, err := r.db.CreateArticles(feed)

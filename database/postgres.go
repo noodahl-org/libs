@@ -79,9 +79,7 @@ func (d PostgresDB) GetOrCreateSource(i *models.Source) error {
 }
 
 func (d PostgresDB) FetchSource(q *models.Source) error {
-	result := d.client.First(&models.Source{
-		URL: q.URL,
-	}, q)
+	result := d.client.First(q, q)
 	return result.Error
 }
 

@@ -35,9 +35,7 @@ func (r RSSClient) FetchFeedList(ctx context.Context, feedSources []models.FeedS
 	defer close(ch)
 
 	for _, fs := range feedSources {
-		endpoints := []string{}
-		endpoints = append(endpoints, fs.Endpoints...)
-		for _, url := range endpoints {
+		for _, url := range fs.Endpoints {
 			source := &models.Source{
 				URL:  url,
 				Tags: fs.Tags,

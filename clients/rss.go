@@ -31,24 +31,26 @@ func NewRSSClient(conf *config.Conf, db database.Database) Feed {
 }
 
 func (r RSSClient) FetchFeedList(ctx context.Context, feedSources []models.FeedSources) {
-	ch := make(chan []models.Article, len(feedSources))
+	var ch chan []models.Article
+	var totalEPs int
 	defer close(ch)
 
 	for _, fs := range feedSources {
-		for _, url := range fs.Endpoints {
+		for _, endpoint := range fs.Endpoints {
+			totalEPs += len(fs.Endpoints)
 			source := &models.Source{
-				URL:  url,
+				URL:  endpoint,
 				Tags: fs.Tags,
 			}
 			err := r.db.GetOrCreateSource(source)
 			if err != nil {
 				log.Panic(err)
 			}
-			go r.FetchURL(ctx, ch, url, source.StorageBase.ID)
+			go r.FetchURL(ctx, ch, endpoint, source.StorageBase.ID)
 		}
 	}
 
-	for i := 0; i < len(feedSources); i++ {
+	for i := 0; i < totalEPs; i++ {
 		feed := <-ch
 		if len(feed) > 0 {
 			num, err := r.db.CreateArticles(feed)

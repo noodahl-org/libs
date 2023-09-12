@@ -16,9 +16,9 @@ type DomainAggregation struct {
 
 type Source struct {
 	StorageBase
-	URL    string   `json:"url"`
-	Domain string   `json:"domain"`
-	Tags   []string `json:"tags" gorm:"type:text"`
+	URL    string `json:"url"`
+	Domain string `json:"domain"`
+	Tags   string `json:"tags" gorm:"type:text"`
 }
 
 func (s *Source) Valid() bool {

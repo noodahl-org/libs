@@ -5,8 +5,13 @@ import (
 )
 
 type FeedSources struct {
-	Sources []string
-	Tags    []string
+	Endpoints []string
+	Tags      []string
+}
+
+type DomainAggregation struct {
+	Domain       string `json:"domain"`
+	ArticleCount string `json:"article_count"`
 }
 
 type Source struct {

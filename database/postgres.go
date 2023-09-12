@@ -115,3 +115,9 @@ func (d PostgresDB) CreateWebAPIRequestStats(i *models.APIRequestStats) error {
 	result := d.client.Clauses(clause.OnConflict{DoNothing: true}).Create(i)
 	return result.Error
 }
+
+func (d PostgresDB) FetchDistinctDomains() ([]models.Source, error) {
+	out := []models.Source{}
+	result := d.client.Distinct("domain", "tags").Find(&out, &models.Source{})
+	return out, result.Error
+}

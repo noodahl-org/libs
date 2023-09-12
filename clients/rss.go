@@ -13,7 +13,7 @@ import (
 
 type Feed interface {
 	FetchURL(ctx context.Context, c chan []models.Article, url string, sourceID uuid.UUID)
-	FetchFeedList(ctx context.Context, feedSources []string)
+	FetchFeedList(ctx context.Context, feedSources []models.FeedSources)
 }
 
 type RSSClient struct {
@@ -30,20 +30,24 @@ func NewRSSClient(conf *config.Conf, db database.Database) Feed {
 	}
 }
 
-func (r RSSClient) FetchFeedList(ctx context.Context, feedSources []string) {
+func (r RSSClient) FetchFeedList(ctx context.Context, feedSources []models.FeedSources) {
 	ch := make(chan []models.Article, len(feedSources))
 	defer close(ch)
 
-	for _, url := range feedSources {
-		source := &models.Source{
-			URL: url,
+	for _, fs := range feedSources {
+		endpoints := []string{}
+		endpoints = append(endpoints, fs.Endpoints...)
+		for _, url := range endpoints {
+			source := &models.Source{
+				URL:  url,
+				Tags: fs.Tags,
+			}
+			err := r.db.GetOrCreateSource(source)
+			if err != nil {
+				log.Panic(err)
+			}
+			go r.FetchURL(ctx, ch, url, source.StorageBase.ID)
 		}
-		err := r.db.GetOrCreateSource(source)
-		if err != nil {
-			log.Panic(err)
-		}
-		go r.FetchURL(ctx, ch, url, source.StorageBase.ID)
-
 	}
 
 	for i := 0; i < len(feedSources); i++ {

@@ -4,6 +4,11 @@ import (
 	"net/url"
 )
 
+type FeedSources struct {
+	Sources []string
+	Tags    []string
+}
+
 type Source struct {
 	StorageBase
 	URL    string `json:"url"`

@@ -2,6 +2,7 @@ package clients
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -40,7 +41,8 @@ func (r RSSClient) FetchFeedList(ctx context.Context, feedSources []string) {
 		}
 		err := r.db.GetOrCreateSource(source)
 		if err != nil {
-			log.Panic(err)
+			r.db.LogError(fmt.Sprintf("RSSClient.FetchFeedList: %v", url), err)
+			continue
 		}
 		go r.FetchURL(ctx, ch, url, source.StorageBase.ID)
 
@@ -50,10 +52,10 @@ func (r RSSClient) FetchFeedList(ctx context.Context, feedSources []string) {
 		feed := <-ch
 		if len(feed) > 0 {
 			num, err := r.db.CreateArticles(feed)
-			log.Printf("%v articles created", num)
 			if err != nil {
 				log.Panic(err)
 			}
+			log.Printf("%v articles created", num)
 		}
 	}
 }

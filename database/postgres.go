@@ -121,3 +121,14 @@ func (d PostgresDB) FetchDistinctDomains() ([]models.Source, error) {
 	result := d.client.Distinct("domain", "tags").Find(&out, &models.Source{})
 	return out, result.Error
 }
+
+func (d PostgresDB) LogError(caller string, err error) error {
+	result := d.client.Create(&models.ErrorLog{
+		StorageBase: models.StorageBase{
+			ID: uuid.New(),
+		},
+		Caller:   caller,
+		ErrorMsg: err.Error(),
+	})
+	return result.Error
+}

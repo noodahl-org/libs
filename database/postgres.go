@@ -116,10 +116,11 @@ func (d PostgresDB) CreateWebAPIRequestStats(i *models.APIRequestStats) error {
 	return result.Error
 }
 
-func (d PostgresDB) FetchDistinctDomains() ([]models.Source, error) {
-	out := []models.Source{}
-	result := d.client.Distinct("domain", "tags").Find(&out, &models.Source{})
-	return out, result.Error
+func (d PostgresDB) FetchDistinctSources() ([]string, error) {
+	result := []string{}
+	tx := d.client.Raw("select distinct replace(domain, 'www.', '') as source from sources order by source").Scan(&result)
+	return result, tx.Error
+
 }
 
 func (d PostgresDB) LogError(caller string, err error) error {

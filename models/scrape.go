@@ -11,6 +11,7 @@ const (
 type Scrape struct {
 	StorageBase
 	URL      string `gorm:"index:idx_source_url,unique"`
+	Domain   string
 	Response int
 	Type     ScrapeType
 }

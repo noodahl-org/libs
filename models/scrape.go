@@ -10,7 +10,7 @@ const (
 
 type Scrape struct {
 	StorageBase
-	URL      string
+	URL      string `gorm:"index:idx_source_url,unique"`
 	Response int
 	Type     ScrapeType
 }

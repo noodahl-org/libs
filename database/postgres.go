@@ -64,6 +64,11 @@ func (d PostgresDB) CreateScrape(i *models.Scrape) (int64, error) {
 	return result.RowsAffected, result.Error
 }
 
+func (d PostgresDB) UpdateScrape(q *models.Scrape) (int64, error) {
+	result := d.client.Save(q)
+	return result.RowsAffected, result.Error
+}
+
 func (d PostgresDB) GetOrCreateSource(i *models.Source) error {
 	var err error
 	url := i.URL
@@ -113,6 +118,12 @@ func (d PostgresDB) FetchArticlesSummaryLimit(q *models.Article, limit int) ([]m
 func (d PostgresDB) FetchArticles(q *models.Article) ([]models.Article, error) {
 	out := []models.Article{}
 	result := d.client.Order("published DESC").Find(&out, q)
+	return out, result.Error
+}
+
+func (d PostgresDB) FetchScrapes(q *models.Scrape) ([]models.Scrape, error) {
+	out := []models.Scrape{}
+	result := d.client.Find(&out, q)
 	return out, result.Error
 }
 

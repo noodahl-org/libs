@@ -59,6 +59,11 @@ func (d PostgresDB) CreateSource(i *models.Source) (int64, error) {
 	return result.RowsAffected, result.Error
 }
 
+func (d PostgresDB) CreateScrape(i *models.Scrape) (int64, error) {
+	result := d.client.Clauses(clause.OnConflict{DoNothing: true}).Create(i)
+	return result.RowsAffected, result.Error
+}
+
 func (d PostgresDB) GetOrCreateSource(i *models.Source) error {
 	var err error
 	url := i.URL
@@ -84,6 +89,11 @@ func (d PostgresDB) FetchSource(q *models.Source) error {
 }
 
 func (d PostgresDB) FetchArticle(q *models.Article) error {
+	result := d.client.First(q, q)
+	return result.Error
+}
+
+func (d PostgresDB) FetchScrape(q *models.Scrape) error {
 	result := d.client.First(q, q)
 	return result.Error
 }

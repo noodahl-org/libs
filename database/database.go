@@ -17,5 +17,7 @@ type Database interface {
 	FetchArticlesSummaryLimit(a *models.Article, limit int) ([]models.Article, error)
 	CreateWebAPIRequestStats(i *models.APIRequestStats) error
 	FetchDistinctSources() ([]string, error)
+	CreateScrape(i *models.Scrape) (int64, error)
+	FetchScrape(q *models.Scrape) error
 	LogError(caller string, err error) error
 }

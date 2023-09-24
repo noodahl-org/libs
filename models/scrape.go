@@ -10,7 +10,7 @@ const (
 
 type Scrape struct {
 	StorageBase
-	URL          string
-	HTTPResponse int
-	Type         ScrapeType
+	URL      string
+	Response int
+	Type     ScrapeType
 }

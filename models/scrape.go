@@ -4,12 +4,13 @@ type ScrapeType int
 
 const (
 	SCRAPE_INELIGIBLE ScrapeType = iota
-	SCRAPE_RSS_FEDD
+	SCRAPE_RSS_FEED
 	SCRAPE_URL
 )
 
 type Scrape struct {
 	StorageBase
-	URL  string
-	Type ScrapeType
+	URL          string
+	HTTPResponse int
+	Type         ScrapeType
 }

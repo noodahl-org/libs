@@ -65,7 +65,11 @@ func (d PostgresDB) CreateScrape(i *models.Scrape) (int64, error) {
 }
 
 func (d PostgresDB) UpdateScrape(q *models.Scrape) (int64, error) {
-	result := d.client.Save(q)
+	result := d.client.First(q).Updates(map[string]interface{}{
+		"type":     q.Type,
+		"domain":   q.Domain,
+		"response": q.Response,
+	})
 	return result.RowsAffected, result.Error
 }
 

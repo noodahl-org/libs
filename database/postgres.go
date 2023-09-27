@@ -64,6 +64,11 @@ func (d PostgresDB) CreateScrape(i *models.Scrape) (int64, error) {
 	return result.RowsAffected, result.Error
 }
 
+func (d PostgresDB) CreateScrapes(i []models.Scrape) (int64, error) {
+	result := d.client.Clauses(clause.OnConflict{DoNothing: true}).Create(i)
+	return result.RowsAffected, result.Error
+}
+
 func (d PostgresDB) UpdateScrape(q *models.Scrape) (int64, error) {
 	result := d.client.First(q).Updates(map[string]interface{}{
 		"type":     q.Type,

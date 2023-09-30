@@ -130,9 +130,9 @@ func (d PostgresDB) FetchArticles(q *models.Article) ([]models.Article, error) {
 	return out, result.Error
 }
 
-func (d PostgresDB) FetchScrapes(q *models.Scrape) ([]models.Scrape, error) {
+func (d PostgresDB) FetchScrapes(q *models.Scrape, limit int) ([]models.Scrape, error) {
 	out := []models.Scrape{}
-	result := d.client.Find(&out, q)
+	result := d.client.Find(&out, q).Limit(limit)
 	return out, result.Error
 }
 

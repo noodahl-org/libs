@@ -20,7 +20,7 @@ type Database interface {
 	CreateScrape(i *models.Scrape) (int64, error)
 	CreateScrapes(i []models.Scrape) (int64, error)
 	FetchScrape(q *models.Scrape) error
-	FetchScrapes(q *models.Scrape) ([]models.Scrape, error)
+	FetchScrapes(q *models.Scrape, limit int) ([]models.Scrape, error)
 	UpdateScrape(q *models.Scrape) (int64, error)
 	LogError(caller string, err error) error
 }

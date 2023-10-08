@@ -37,14 +37,17 @@ func (r RSSClient) FetchFeedList(ctx context.Context, feedSources []string) {
 
 	for _, url := range feedSources {
 		source := &models.Source{
-			URL: url,
+			URL:     url,
+			Enabled: true,
 		}
 		err := r.db.GetOrCreateSource(source)
 		if err != nil {
 			r.db.LogError(fmt.Sprintf("RSSClient.FetchFeedList: %v", url), err)
 			continue
 		}
-		go r.FetchURL(ctx, ch, url, source.StorageBase.ID)
+		if source.Enabled {
+			go r.FetchURL(ctx, ch, url, source.StorageBase.ID)
+		}
 
 	}
 
@@ -65,7 +68,17 @@ func (r RSSClient) FetchURL(ctx context.Context, c chan []models.Article, url st
 	feed, err := r.parser.ParseURLWithContext(url, ctx)
 	if err != nil {
 		log.Printf("error: %s", err)
+		if _, err := r.db.UpdateSource(&models.Source{
+			StorageBase: models.StorageBase{
+				ID: sourceID,
+			},
+			URL:     url,
+			Enabled: false,
+		}); err != nil {
+			log.Printf("error updating source: %s", err)
+		}
 		c <- []models.Article{}
+		return
 	}
 
 	for _, item := range feed.Items {

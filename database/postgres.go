@@ -97,6 +97,18 @@ func (d PostgresDB) GetOrCreateSource(i *models.Source) error {
 	return err
 }
 
+func (d PostgresDB) UpdateSource(q *models.Source) (int64, error) {
+	result := d.client.First(&models.Source{
+		StorageBase: models.StorageBase{
+			ID: q.ID,
+		},
+	}).Updates(map[string]interface{}{
+		"url":     q.URL,
+		"enabled": q.Enabled,
+	})
+	return result.RowsAffected, result.Error
+}
+
 func (d PostgresDB) FetchSource(q *models.Source) error {
 	result := d.client.First(q, q)
 	return result.Error

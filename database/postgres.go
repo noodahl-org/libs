@@ -160,7 +160,7 @@ func (d PostgresDB) CreateWebAPIRequestStats(i *models.APIRequestStats) error {
 
 func (d PostgresDB) FetchDistinctSources() ([]string, error) {
 	result := []string{}
-	tx := d.client.Raw("select distinct replace(domain, 'www.', '') as source from sources order by source").Scan(&result)
+	tx := d.client.Raw("select distinct replace(domain, 'www.', '') as source from sources where enabled=true order by source").Scan(&result)
 	return result, tx.Error
 
 }
